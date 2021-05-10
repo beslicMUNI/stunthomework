@@ -1,0 +1,1 @@
+<p>Vacations index</p>
