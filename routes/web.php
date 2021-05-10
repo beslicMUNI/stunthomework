@@ -19,7 +19,11 @@ Route::get('/', function () {
 
 Route::post('/login', 'UserController@login');
 Route::get('/admin', 'AdminController@index')->name('admin');
-Route::get('/vacations', 'VacationController@index')->name('vacations');
 
 Route::get('/add-employee', 'AdminController@addEmployee');
 Route::post('/store-employee', 'AdminController@store');
+
+Route::get('/vacations', 'VacationController@index')->name('vacations');
+Route::post('/store-vacation', 'VacationController@store');
+
+
