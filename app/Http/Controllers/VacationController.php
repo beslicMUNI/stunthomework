@@ -7,13 +7,13 @@ use App\Vacation;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
 
 class VacationController extends Controller
 {
     //
     public function index(){
-        return view('vacations.index');
+        $user = Auth::user();
+        return view('vacations.index', ['user'=>$user]);
     }
 
     public function store(Request $request){
@@ -22,8 +22,8 @@ class VacationController extends Controller
         $dateFrom = $request->date_from;
         $dateTo = $request-> date_to;
 
-        if($dateFrom >= $dateTo || $dateFrom < now()){
-            return 'put correct dates!';
+        if($dateFrom >= $dateTo || $dateFrom < now()){            
+            return back()->with('error', 'put correct dates!');
         }
 
         // checking if somebody from same position is already on vacation on same dates
@@ -40,7 +40,7 @@ class VacationController extends Controller
         if(!empty($overlapingvacations)){       
             foreach ($overlapingvacations as $ov) {               
                 if($ov->user->positionid == $positionid) {
-                    return 'Somebody from same position is already on vacation';
+                    return back()->with('error', 'Somebody from same position is already on vacation');
                 }
             }
         } 
@@ -50,8 +50,7 @@ class VacationController extends Controller
         $startDate = new DateTime($user->started_at);  
         $currentDate = new DateTime(now());
 
-        $daysAsked = $toFormated->diff($fromFormated)->d + 1;
-        
+        $daysAsked = $toFormated->diff($fromFormated)->d + 1;  
 
         
 
@@ -88,33 +87,13 @@ class VacationController extends Controller
             // ako nije prvi odmor, dani su vec prebaceni, i samo koristi sta moze
 
             if ($daysAsked > ($user->old_days_available + $user->days_available)){
-                return 'no enough available days';
+                return back()->with('error', 'not enough available days');
             } else {
                                           
                 $this->insertVacation($daysAsked, $request);
-            }
-
-            // if($toFormated > $currentDate->setDate(now()->year, 6, 30)){
-            //     // return 'no more old vacation';  because user asked for vacation after June 30th
-            //     $daysAvailable = 20;
-            //     $daysUsedThisYear = 0;
-            //     $thisYearVacations = Vacation::where('userid', $user->id)->whereYear('date_to', now()->year)->get();
-            //     // return $thisYearVacations;
-            //     foreach ($thisYearVacations as $tyv) {
-            //         # code...
-            //         $tyvDateFrom = new DateTime($tyv->date_from);
-            //         $tyvDateTo = new DateTime($tyv->date_to);
-            //         $daysUsedThisYear += $tyvDateTo->diff($tyvDateFrom)->d +1;                    
-            //     }
-            //    //  return $daysUsedThisYear;   
-            //    $daysAvailable -= $daysUsedThisYear;
-            //    return $daysAvailable;
-                
-           
+            }        
             
-            if(now()->diff($startDate)->y >= 1){
-
-            }
+            
         }
     }
 
@@ -151,9 +130,16 @@ class VacationController extends Controller
         $vacation->userid = $user->id;
 
         if($vacation->save()){
-            echo('vacation saved');
+            return back()->with('success', 'vacation saved');
         } else {
-            return 'vacation not saved';
+            return back()->with('error', 'vacation not saved');
         }
+    }
+
+    public function confirm($vacationid){
+        $vacation = Vacation::find($vacationid);
+        $vacation->confirmed = 1;
+        $vacation->save();
+        return redirect()->back();
     }
 }

@@ -18,6 +18,7 @@ Route::get('/', function () {
 });
 
 Route::post('/login', 'UserController@login');
+Route::get('/logout', 'UserController@logout');
 Route::get('/admin', 'AdminController@index')->name('admin');
 
 Route::get('/add-employee', 'AdminController@addEmployee');
@@ -25,5 +26,6 @@ Route::post('/store-employee', 'AdminController@store');
 
 Route::get('/vacations', 'VacationController@index')->name('vacations');
 Route::post('/store-vacation', 'VacationController@store');
+Route::get('/vacation/confirm/{id}', 'VacationController@confirm');
 
 

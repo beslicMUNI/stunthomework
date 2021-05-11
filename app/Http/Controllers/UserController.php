@@ -21,7 +21,12 @@ class UserController extends Controller
             }
         } else {
 
-            return 'bad credentials';
+            return back()->with('error', 'bad credentials');
         }
+    }
+
+    public function logout(){
+        Auth::logout();
+        return redirect('/');
     }
 }

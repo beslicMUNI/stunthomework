@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Position;
 use App\User;
+use App\Vacation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,7 +13,8 @@ class AdminController extends Controller
     //
 
     public function index(){
-        return view('admin.index');
+        $vacations = Vacation::all();
+        return view('admin.index', ['vacations' => $vacations]);
     }
 
     public function addEmployee(){
@@ -31,10 +33,10 @@ class AdminController extends Controller
 
         $data = $request->only($user->getFillable());
         $user->fill($data);
-        $user->password = Hash::make($request->passwod);
+        $user->password = Hash::make($request->password);
 
         if($user->save()){
-            return 'Saved succesfully';
+            return back()->with('success', 'Saved succesfully');
         }
 
 
