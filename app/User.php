@@ -10,13 +10,15 @@ class User extends Authenticatable
 {
     use Notifiable;
 
+    protected $table = 'users';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'contract_type', 'role', 'positionid', 'started_at'
+        'name', 'email', 'password', 'contract_type', 'role', 'positionid', 'started_at', 'old_days_available', 'days_available'
     ];
 
     /**
@@ -42,6 +44,6 @@ class User extends Authenticatable
     }
 
     public function position() {
-        return $this->hasOne(Position::class, 'positionid');
+        return $this->hasOne(Position::class, 'id');
     }
 }
