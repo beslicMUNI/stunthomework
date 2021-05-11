@@ -19,13 +19,14 @@ Route::get('/', function () {
 
 Route::post('/login', 'UserController@login');
 Route::get('/logout', 'UserController@logout');
-Route::get('/admin', 'AdminController@index')->name('admin');
+Route::get('/admin', 'AdminController@index')->name('admin')->middleware('can:admin');
 
-Route::get('/add-employee', 'AdminController@addEmployee');
-Route::post('/store-employee', 'AdminController@store');
+Route::get('/add-employee', 'AdminController@addEmployee')->middleware('can:add-employee');
+Route::post('/store-employee', 'AdminController@store')->middleware('can:store-employee');
 
-Route::get('/vacations', 'VacationController@index')->name('vacations');
-Route::post('/store-vacation', 'VacationController@store');
-Route::get('/vacation/confirm/{id}', 'VacationController@confirm');
+Route::get('/vacations', 'VacationController@index')->name('vacations')->middleware('can:vacations');
+Route::post('/store-vacation', 'VacationController@store')->middleware('can:store-vacation');
+
+Route::get('/vacation/confirm/{id}', 'VacationController@confirm')->name('confrim-vacation')->middleware('can:confirm-vacation');
 
 
